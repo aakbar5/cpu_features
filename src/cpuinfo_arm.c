@@ -23,14 +23,31 @@
 
 #include <ctype.h>
 
+/* HWCAPS */
+DECLARE_SETTER(ArmFeatures, swp)
+DECLARE_SETTER(ArmFeatures, half)
+DECLARE_SETTER(ArmFeatures, thumb)
+DECLARE_SETTER(ArmFeatures, _26bit)
+DECLARE_SETTER(ArmFeatures, fastmult)
+DECLARE_SETTER(ArmFeatures, fpa)
 DECLARE_SETTER(ArmFeatures, vfp)
+DECLARE_SETTER(ArmFeatures, edsp)
+DECLARE_SETTER(ArmFeatures, java)
 DECLARE_SETTER(ArmFeatures, iwmmxt)
+DECLARE_SETTER(ArmFeatures, crunch)
+DECLARE_SETTER(ArmFeatures, thumbee)
 DECLARE_SETTER(ArmFeatures, neon)
 DECLARE_SETTER(ArmFeatures, vfpv3)
 DECLARE_SETTER(ArmFeatures, vfpv3d16)
+DECLARE_SETTER(ArmFeatures, tls)
 DECLARE_SETTER(ArmFeatures, vfpv4)
 DECLARE_SETTER(ArmFeatures, idiva)
 DECLARE_SETTER(ArmFeatures, idivt)
+DECLARE_SETTER(ArmFeatures, vfpd32)
+DECLARE_SETTER(ArmFeatures, lpae)
+DECLARE_SETTER(ArmFeatures, evtstrm)
+
+/* HWCAPS2 */
 DECLARE_SETTER(ArmFeatures, aes)
 DECLARE_SETTER(ArmFeatures, pmull)
 DECLARE_SETTER(ArmFeatures, sha1)
@@ -38,19 +55,36 @@ DECLARE_SETTER(ArmFeatures, sha2)
 DECLARE_SETTER(ArmFeatures, crc32)
 
 static const CapabilityConfig kConfigs[] = {
-    {{ARM_HWCAP_VFP, 0}, "vfp", &set_vfp},                 //
-    {{ARM_HWCAP_IWMMXT, 0}, "iwmmxt", &set_iwmmxt},        //
-    {{ARM_HWCAP_NEON, 0}, "neon", &set_neon},              //
-    {{ARM_HWCAP_VFPV3, 0}, "vfpv3", &set_vfpv3},           //
-    {{ARM_HWCAP_VFPV3D16, 0}, "vfpv3d16", &set_vfpv3d16},  //
-    {{ARM_HWCAP_VFPV4, 0}, "vfpv4", &set_vfpv4},           //
-    {{ARM_HWCAP_IDIVA, 0}, "idiva", &set_idiva},           //
-    {{ARM_HWCAP_IDIVT, 0}, "idivt", &set_idivt},           //
-    {{0, ARM_HWCAP2_AES}, "aes", &set_aes},                //
-    {{0, ARM_HWCAP2_PMULL}, "pmull", &set_pmull},          //
-    {{0, ARM_HWCAP2_SHA1}, "sha1", &set_sha1},             //
-    {{0, ARM_HWCAP2_SHA2}, "sha2", &set_sha2},             //
-    {{0, ARM_HWCAP2_CRC32}, "crc32", &set_crc32},          //
+  /* HWCAPS */
+  {{ARM_HWCAP_SWP,        0},                   "swp",      &set_swp},              //
+  {{ARM_HWCAP_HALF,       0},                   "half",     &set_half},             //
+  {{ARM_HWCAP_THUMB,      0},                   "thumb",    &set_thumb},            //
+  {{ARM_HWCAP_26BIT,      0},                   "26bit",    &set__26bit},           //
+  {{ARM_HWCAP_FAST_MULT,  0},                   "fastmult", &set_fastmult},         //
+  {{ARM_HWCAP_FPA,        0},                   "fpa",      &set_fpa},              //
+  {{ARM_HWCAP_VFP,        0},                   "vfp",      &set_vfp},              //
+  {{ARM_HWCAP_EDSP,       0},                   "edsp",     &set_edsp},             //
+  {{ARM_HWCAP_JAVA,       0},                   "java",     &set_java},             //
+  {{ARM_HWCAP_IWMMXT,     0},                   "iwmmxt",   &set_iwmmxt},           //
+  {{ARM_HWCAP_CRUNCH,     0},                   "crunch",   &set_crunch},           //
+  {{ARM_HWCAP_THUMBEE,    0},                   "thumbee",  &set_thumbee},          //
+  {{ARM_HWCAP_NEON,       0},                   "neon",     &set_neon},             //
+  {{ARM_HWCAP_VFPv3,      0},                   "vfpv3",    &set_vfpv3},            //
+  {{ARM_HWCAP_VFPv3D16,   0},                   "vfpv3d16", &set_vfpv3d16},         //
+  {{ARM_HWCAP_TLS,        0},                   "tls",      &set_tls},              //
+  {{ARM_HWCAP_VFPv4,      0},                   "vfpv4",    &set_vfpv4},            //
+  {{ARM_HWCAP_IDIVA,      0},                   "idiva",    &set_idiva},            //
+  {{ARM_HWCAP_IDIVT,      0},                   "idivt",    &set_idivt},            //
+  {{ARM_HWCAP_VFPD32,     0},                   "vfpd32",   &set_vfpd32},           //
+  {{ARM_HWCAP_LPAE,       0},                   "lpae",     &set_lpae},             //
+  {{ARM_HWCAP_EVTSTRM,    0},                   "evtstrm",  &set_evtstrm},          //
+
+  /* HWCAPS2 */
+  {{0,                  ARM_HWCAP2_AES},        "aes",    &set_aes},                //
+  {{0,                  ARM_HWCAP2_PMULL},      "pmull",  &set_pmull},              //
+  {{0,                  ARM_HWCAP2_SHA1},       "sha1",   &set_sha1},               //
+  {{0,                  ARM_HWCAP2_SHA2},       "sha2",   &set_sha2},               //
+  {{0,                  ARM_HWCAP2_CRC32},      "crc32",  &set_crc32},              //
 };
 
 static const size_t kConfigsSize = sizeof(kConfigs) / sizeof(CapabilityConfig);
@@ -188,68 +222,70 @@ ArmInfo GetArmInfo(void) {
 int GetArmFeaturesEnumValue(const ArmFeatures* features,
                             ArmFeaturesEnum value) {
   switch (value) {
-    case ARM_VFP:
-      return features->vfp;
-    case ARM_IWMMXT:
-      return features->iwmmxt;
-    case ARM_NEON:
-      return features->neon;
-    case ARM_VFPV3:
-      return features->vfpv3;
-    case ARM_VFPV3D16:
-      return features->vfpv3d16;
-    case ARM_VFPV4:
-      return features->vfpv4;
-    case ARM_IDIVA:
-      return features->idiva;
-    case ARM_IDIVT:
-      return features->idivt;
-    case ARM_AES:
-      return features->aes;
-    case ARM_PMULL:
-      return features->pmull;
-    case ARM_SHA1:
-      return features->sha1;
-    case ARM_SHA2:
-      return features->sha2;
-    case ARM_CRC32:
-      return features->crc32;
-    case ARM_LAST_:
-      break;
+  case ARM_SWP        : return features->swp;
+  case ARM_HALF       : return features->half;
+  case ARM_THUMB      : return features->thumb;
+  case ARM_26BIT      : return features->_26bit;
+  case ARM_FAST_MULT  : return features->fastmult;
+  case ARM_FPA        : return features->fpa;
+  case ARM_VFP        : return features->vfp;
+  case ARM_EDSP       : return features->edsp;
+  case ARM_JAVA       : return features->java;
+  case ARM_IWMMXT     : return features->iwmmxt;
+  case ARM_CRUNCH     : return features->crunch;
+  case ARM_THUMBEE    : return features->thumbee;
+  case ARM_NEON       : return features->neon;
+  case ARM_VFPv3      : return features->vfpv3;
+  case ARM_VFPv3D16   : return features->vfpv3d16;
+  case ARM_TLS        : return features->tls;
+  case ARM_VFPv4      : return features->vfpv4;
+  case ARM_IDIVA      : return features->idiva;
+  case ARM_IDIVT      : return features->idivt;
+  case ARM_VFPD32     : return features->vfpd32;
+  case ARM_IDIV       : return features->idiv;
+  case ARM_LPAE       : return features->lpae;
+  case ARM_EVTSTRM    : return features->evtstrm;
+  case ARM_AES        : return features->aes;
+  case ARM_PMULL      : return features->pmull;
+  case ARM_SHA1       : return features->sha1;
+  case ARM_SHA2       : return features->sha2;
+  case ARM_CRC32      : return features->crc32;
+  case ARM_LAST_      : break;
   }
   return false;
 }
 
 const char* GetArmFeaturesEnumName(ArmFeaturesEnum value) {
   switch (value) {
-    case ARM_VFP:
-      return "vfp";
-    case ARM_IWMMXT:
-      return "iwmmxt";
-    case ARM_NEON:
-      return "neon";
-    case ARM_VFPV3:
-      return "vfpv3";
-    case ARM_VFPV3D16:
-      return "vfpv3d16";
-    case ARM_VFPV4:
-      return "vfpv4";
-    case ARM_IDIVA:
-      return "idiva";
-    case ARM_IDIVT:
-      return "idivt";
-    case ARM_AES:
-      return "aes";
-    case ARM_PMULL:
-      return "pmull";
-    case ARM_SHA1:
-      return "sha1";
-    case ARM_SHA2:
-      return "sha2";
-    case ARM_CRC32:
-      return "crc32";
-    case ARM_LAST_:
-      break;
+  case ARM_SWP        : return "swp";
+  case ARM_HALF       : return "half";
+  case ARM_THUMB      : return "thumb";
+  case ARM_26BIT      : return "26bit";
+  case ARM_FAST_MULT  : return "fastmult";
+  case ARM_FPA        : return "fpa";
+  case ARM_VFP        : return "vfp";
+  case ARM_EDSP       : return "edsp";
+  case ARM_JAVA       : return "java";
+  case ARM_IWMMXT     : return "iwmmxt";
+  case ARM_CRUNCH     : return "crunch";
+  case ARM_THUMBEE    : return "thumbee";
+  case ARM_NEON       : return "neon";
+  case ARM_VFPv3      : return "vfpv3";
+  case ARM_VFPv3D16   : return "vfpv3d16";
+  case ARM_TLS        : return "tls";
+  case ARM_VFPv4      : return "vfpv4";
+  case ARM_IDIVA      : return "idiva";
+  case ARM_IDIVT      : return "idivt";
+  case ARM_VFPD32     : return "vfpd32";
+  case ARM_IDIV       : return "idiv";
+  case ARM_LPAE       : return "lpae";
+  case ARM_EVTSTRM    : return "evtstrm";
+  case ARM_AES        : return "aes";
+  case ARM_PMULL      : return "pmull";
+  case ARM_SHA1       : return "sha1";
+  case ARM_SHA2       : return "sha2";
+  case ARM_CRC32      : return "crc32";
+  case ARM_LAST_      : break;
   }
   return "unknown feature";
 }

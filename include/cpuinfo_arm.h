@@ -20,19 +20,34 @@
 CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
-  int vfp : 1;       // Vector Floating Point.
-  int iwmmxt : 1;    // Intel Wireless MMX Technology.
-  int neon : 1;      // Advanced SIMD.
-  int vfpv3 : 1;     // VFP version 3
-  int vfpv3d16 : 1;  // VFP version 3 with 16 D-registers
-  int vfpv4 : 1;     // VFP version 4 with fast context switching
-  int idiva : 1;     // SDIV and UDIV hardware division in ARM mode.
-  int idivt : 1;     // SDIV and UDIV hardware division in Thumb mode.
-  int aes : 1;       // Hardware-accelerated Advanced Encryption Standard.
-  int pmull : 1;     // Polynomial multiply long.
-  int sha1 : 1;      // Hardware-accelerated SHA1.
-  int sha2 : 1;      // Hardware-accelerated SHA2-256.
-  int crc32 : 1;     // Hardware-accelerated CRC-32.
+  int swp : 1;        // SWP instruction is supported
+  int half : 1;
+  int thumb : 1;      // Thumb mode is supported
+  int _26bit : 1;
+  int fastmult : 1;
+  int fpa : 1;
+  int vfp : 1;        // Vector Floating Point.
+  int edsp : 1;
+  int java : 1;
+  int iwmmxt : 1;     // Intel Wireless MMX Technology.
+  int crunch : 1;
+  int thumbee : 1;    // ThumbEE extension in CPU
+  int neon : 1;       // Advanced SIMD.
+  int vfpv3 : 1;      // VFP version 3
+  int vfpv3d16 : 1;   // VFP version 3 with 16 D-registers
+  int tls : 1;
+  int vfpv4 : 1;      // VFP version 4 with fast context switching
+  int idiva : 1;      // SDIV and UDIV hardware division in ARM mode.
+  int idivt : 1;      // SDIV and UDIV hardware division in Thumb mode.
+  int vfpd32 : 1;
+  int idiv : 1;
+  int lpae : 1;       // Large Physical Address Extension
+  int evtstrm : 1;
+  int aes : 1;        // Hardware-accelerated Advanced Encryption Standard.
+  int pmull : 1;      // Polynomial multiply long.
+  int sha1 : 1;       // Hardware-accelerated SHA1.
+  int sha2 : 1;       // Hardware-accelerated SHA2-256.
+  int crc32 : 1;      // Hardware-accelerated CRC-32.
 
   // Make sure to update ArmFeaturesEnum below if you add a field here.
 } ArmFeatures;
@@ -55,14 +70,29 @@ ArmInfo GetArmInfo(void);
 // Introspection functions
 
 typedef enum {
+  ARM_SWP,
+  ARM_HALF,
+  ARM_THUMB,
+  ARM_26BIT,
+  ARM_FAST_MULT,
+  ARM_FPA,
   ARM_VFP,
+  ARM_EDSP,
+  ARM_JAVA,
   ARM_IWMMXT,
+  ARM_CRUNCH,
+  ARM_THUMBEE,
   ARM_NEON,
-  ARM_VFPV3,
-  ARM_VFPV3D16,
-  ARM_VFPV4,
+  ARM_VFPv3,
+  ARM_VFPv3D16,
+  ARM_TLS,
+  ARM_VFPv4,
   ARM_IDIVA,
   ARM_IDIVT,
+  ARM_VFPD32,
+  ARM_IDIV,
+  ARM_LPAE,
+  ARM_EVTSTRM,
   ARM_AES,
   ARM_PMULL,
   ARM_SHA1,
