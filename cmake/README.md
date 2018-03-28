@@ -10,7 +10,6 @@
 
   Build and use step-by-step
 
-
   1- Download cpu_features and copy it in a sub-directory in your project.
       or add cpu_features as a git-submodule in your project
 
@@ -19,6 +18,16 @@
 
   3- Add the `cpu_features` target to the `target_link_libraries()` section of
      your executable or of your library.
+
+## Cross compilation
+
+  For ARM architecture cross compilation, use `cross-arm-toolchain.txt` as a reference.
+
+  1- Update `cross-arm-toolchain.txt` as per your compiler installation.
+
+  2- Pass `cross-arm-toolchain.txt` to cmake.
+  
+     `cmake <cpu_features_source_folder> -DCMAKE_TOOLCHAIN_FILE=<cpu_features_source_folder>/cmake/cross-arm-toolchain.txt`
 
 ## Enabling tests
 
