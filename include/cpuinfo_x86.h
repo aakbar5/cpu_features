@@ -29,6 +29,11 @@ typedef struct {
   int bmi1 : 1;
   int bmi2 : 1;
 
+  int mmx : 1;
+  int fxsr : 1;
+
+  int sse : 1;
+  int sse2 : 1;
   int ssse3 : 1;
   int sse4_1 : 1;
   int sse4_2 : 1;
@@ -54,6 +59,8 @@ typedef struct {
 
   int smx : 1;
   int sgx : 1;
+
+  int cx8 : 1;
   int cx16 : 1;  // aka. CMPXCHG16B
 
   // Make sure to update X86FeaturesEnum below if you add a field here.
@@ -117,6 +124,10 @@ typedef enum {
   X86_VPCLMULQDQ,
   X86_BMI1,
   X86_BMI2,
+  X86_MMX,
+  X86_FXSR,
+  X86_SSE,
+  X86_SSE2,
   X86_SSSE3,
   X86_SSE4_1,
   X86_SSE4_2,
@@ -139,6 +150,7 @@ typedef enum {
   X86_AVX512_4VBMI2,
   X86_SMX,
   X86_SGX,
+  X86_CX8,
   X86_CX16,
   X86_LAST_,
 } X86FeaturesEnum;

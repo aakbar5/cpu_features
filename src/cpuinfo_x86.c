@@ -96,17 +96,24 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   info->stepping = ExtractBitRange(leaf_1.eax, 3, 0);
 
   features->smx = IsBitSet(leaf_1.ecx, 6);
+  features->cx8   = IsBitSet(leaf_1.edx, 9);
   features->cx16 = IsBitSet(leaf_1.ecx, 13);
   features->aes = IsBitSet(leaf_1.ecx, 25);
   features->f16c = IsBitSet(leaf_1.ecx, 29);
+
   features->sgx = IsBitSet(leaf_7.ebx, 2);
   features->bmi1 = IsBitSet(leaf_7.ebx, 3);
   features->bmi2 = IsBitSet(leaf_7.ebx, 8);
   features->erms = IsBitSet(leaf_7.ebx, 9);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
 
+  features->mmx = IsBitSet(leaf_1.edx, 23);
+  features->fxsr = IsBitSet(leaf_1.edx, 24);
+
   if (have_sse_os_support) {
-    features->ssse3 = IsBitSet(leaf_1.ecx, 9);
+	features->sse = IsBitSet(leaf_1.edx, 25);
+	features->sse2 = IsBitSet(leaf_1.edx, 26);
+	features->ssse3 = IsBitSet(leaf_1.ecx, 9);
     features->sse4_1 = IsBitSet(leaf_1.ecx, 19);
     features->sse4_2 = IsBitSet(leaf_1.ecx, 20);
   }
@@ -276,6 +283,10 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->bmi1;
     case X86_BMI2:
       return features->bmi2;
+    case X86_SSE:
+      return features->sse;
+    case X86_SSE2:
+      return features->sse2;
     case X86_SSSE3:
       return features->ssse3;
     case X86_SSE4_1:
@@ -320,8 +331,14 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->smx;
     case X86_SGX:
       return features->sgx;
+    case X86_CX8:
+      return features->cx8;
     case X86_CX16:
       return features->cx16;
+    case X86_MMX:
+      return features->mmx;
+    case X86_FXSR:
+      return features->fxsr;
     case X86_LAST_:
       break;
   }
@@ -388,8 +405,18 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "smx";
     case X86_SGX:
       return "sgx";
+    case X86_CX8:
+      return "cx8";
     case X86_CX16:
       return "cx16";
+    case X86_MMX:
+      return "mmx";
+    case X86_FXSR:
+      return "fxsr";
+    case X86_SSE:
+      return "sse";
+    case X86_SSE2:
+      return "sse2";
     case X86_LAST_:
       break;
   }
